@@ -1,6 +1,7 @@
 package scaler.tictactoe.controllers;
 
 import scaler.tictactoe.models.Game;
+import scaler.tictactoe.models.GameState;
 import scaler.tictactoe.models.Player;
 import scaler.tictactoe.models.PlayerType;
 import scaler.tictactoe.strategies.winningStrategies.WinningStrategies;
@@ -14,17 +15,19 @@ public class GameController {
                 .setWinningStrategies(winningStrategies).build();
     }
 
-    public void makeMove(){
-
+    public void displayBoard(Game game){
+        game.displayBoard();
     }
 
-    public void displayBoard(){
-
+    public GameState checkGameState(Game game){
+        return game.getGameState();
     }
 
-    public void checkGameState(){
-
+    public void makeMove(Game game){
+        game.makeMove();
     }
+
+
 
     public void getWinner(){
 

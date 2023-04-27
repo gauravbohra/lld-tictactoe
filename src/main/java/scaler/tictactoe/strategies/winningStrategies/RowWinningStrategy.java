@@ -5,7 +5,7 @@ import scaler.tictactoe.models.Move;
 
 public class RowWinningStrategy implements WinningStrategies{
 
-    public void checkWinner(Board board, Move move) {
-
+    public boolean checkWinner(Board board, Move move) {
+        return false;
     }
 }

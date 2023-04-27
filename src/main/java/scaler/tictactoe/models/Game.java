@@ -1,9 +1,14 @@
 package scaler.tictactoe.models;
 
+import scaler.tictactoe.exceptions.PlayerCountDimensionMismatchException;
+import scaler.tictactoe.exceptions.DuplicateSymbolException;
+import scaler.tictactoe.exceptions.MoreThanOneBotException;
 import scaler.tictactoe.strategies.winningStrategies.WinningStrategies;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Game {
 
@@ -20,6 +25,71 @@ public class Game {
     public static Builder builder(){
         return new Builder();
     }
+
+
+    public void displayBoard(){
+        this.board.printBoard();
+    }
+
+    public GameState getGameState(){
+        return this.gameState;
+    }
+
+    public void makeMove(){
+        Player currentMovePlayer = this.players.get(this.nextPlayerIndex);
+        System.out.println("It is Player "+currentMovePlayer.getName()+"'s turn. Please, make your move");
+        Move move=currentMovePlayer.makeMove(board);
+        int row=move.getCell().getRow();
+        int col=move.getCell().getCol();
+        System.out.println(currentMovePlayer.getName()+"has made a move at row "+ row
+                +" and column "+col);
+        if(!validateMove(move)){
+            System.out.println("Invalid move. Please try again ");
+            return;
+        }
+
+        Cell cellToUpdate=board.getBoard().get(row).get(col);
+        cellToUpdate.setPlayer(currentMovePlayer);
+        cellToUpdate.setCellState(CellState.FILLED);
+        this.moves.add(move);
+
+        if(checkWinner(move)){
+            this.gameState=GameState.SUCCESS;
+            this.winner=currentMovePlayer;
+        }
+        if(this.moves.size()==board.getSize()* board.getSize()){
+            this.gameState=GameState.DRAW;
+        }
+
+        this.nextPlayerIndex++;
+        this.nextPlayerIndex=this.nextPlayerIndex%players.size();
+    }
+
+    public boolean validateMove(Move move){
+        int row=move.getCell().getRow();
+        int col=move.getCell().getCol();
+        if(row<0 || row>=this.board.getSize()){
+            return false;
+        }
+        if(col<0 || col>=this.board.getSize()){
+            return false;
+        }
+
+        if(this.board.getBoard().get(row).get(col).getCellState()==CellState.FILLED){
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkWinner(Move move){
+        for(WinningStrategies winningStrategies: winningStrategies){
+            if(winningStrategies.checkWinner(board,move)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static class Builder{
         private List<Player> players;
         private int dimension;
@@ -37,15 +107,47 @@ public class Game {
             this.winningStrategies = winningStrategies;
             return this;
         }
-        private void validate(){
 
+        private void validatePlayersUniqueSymbol() throws DuplicateSymbolException {
+            Set<Character> symbolSet =new HashSet<>();
+            for(Player player:players){
+                char playerSymbol=player.getSymbol().getaChar();
+                if(symbolSet.contains(playerSymbol)){
+                    throw new DuplicateSymbolException();
+                }
+                symbolSet.add(playerSymbol);
+            }
         }
+
+        private void validateBotCount() throws MoreThanOneBotException{
+            int botCount=0;
+            for(Player player:players){
+                if(player.getPlayerType()==PlayerType.BOT){
+                    botCount++;
+                }
+                if(botCount>1){
+                    throw new MoreThanOneBotException();
+                }
+            }
+        }
+        private void validatePlayerCountAndDimension() throws PlayerCountDimensionMismatchException{
+            if((dimension-1)!=this.players.size()){
+                throw new PlayerCountDimensionMismatchException();
+            }
+        }
+        private void validate(){
+            validatePlayerCountAndDimension();
+            validateBotCount();
+            validatePlayersUniqueSymbol();
+        }
+
         public Game build(){
+            validate();
             Game game = new Game();
             game.players = this.players;
             game.winningStrategies = this.winningStrategies;
             game.gameState = GameState.IN_PROGRESS;
-            game.board = new Board(dimension);
+            game.board = new Board(this.dimension);
             game.nextPlayerIndex = 0;
             game.moves = new ArrayList<>();
             return game;

@@ -4,5 +4,5 @@ import scaler.tictactoe.models.Board;
 import scaler.tictactoe.models.Move;
 
 public interface WinningStrategies {
-    public void checkWinner(Board board, Move move);
+    public boolean checkWinner(Board board, Move move);
 }

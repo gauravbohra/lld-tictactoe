@@ -1,9 +1,7 @@
 package scaler.tictactoe;
 
 import scaler.tictactoe.controllers.GameController;
-import scaler.tictactoe.models.Player;
-import scaler.tictactoe.models.PlayerType;
-import scaler.tictactoe.models.Symbol;
+import scaler.tictactoe.models.*;
 import scaler.tictactoe.strategies.winningStrategies.ColumnWinningStrategies;
 import scaler.tictactoe.strategies.winningStrategies.RowWinningStrategy;
 import scaler.tictactoe.strategies.winningStrategies.WinningStrategies;
@@ -24,8 +22,16 @@ public class Client {
         winningStrategies.add(new RowWinningStrategy());
         winningStrategies.add(new ColumnWinningStrategies());
 
-        gameController.startGame(3, players, winningStrategies);
+        Game game =gameController.startGame(3, players, winningStrategies);
 
+        while(gameController.checkGameState(game)== GameState.IN_PROGRESS){
+            //Print Board
+            //Make move
+            gameController.displayBoard(game);
+            gameController.makeMove(game);
+        }
+
+        System.out.println("Game has won");
 
     }
 }
