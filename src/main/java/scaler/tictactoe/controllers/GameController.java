@@ -29,8 +29,8 @@ public class GameController {
 
 
 
-    public void getWinner(){
-
+    public String getWinner(Game game){
+        return game.getWinner().getName();
     }
 
     public void undoLastMove(){

@@ -35,6 +35,10 @@ public class Game {
         return this.gameState;
     }
 
+    public Player getWinner() {
+        return winner;
+    }
+
     public void makeMove(){
         Player currentMovePlayer = this.players.get(this.nextPlayerIndex);
         System.out.println("It is Player "+currentMovePlayer.getName()+"'s turn. Please, make your move");
@@ -51,18 +55,20 @@ public class Game {
         Cell cellToUpdate=board.getBoard().get(row).get(col);
         cellToUpdate.setPlayer(currentMovePlayer);
         cellToUpdate.setCellState(CellState.FILLED);
+
+        move=new Move(cellToUpdate,currentMovePlayer);
         this.moves.add(move);
 
         if(checkWinner(move)){
             this.gameState=GameState.SUCCESS;
             this.winner=currentMovePlayer;
         }
-        if(this.moves.size()==board.getSize()* board.getSize()){
+        else if(this.moves.size()==board.getSize()* board.getSize()){
             this.gameState=GameState.DRAW;
         }
 
         this.nextPlayerIndex++;
-        this.nextPlayerIndex=this.nextPlayerIndex%players.size();
+        this.nextPlayerIndex=this.nextPlayerIndex % players.size();
     }
 
     public boolean validateMove(Move move){

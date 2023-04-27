@@ -3,6 +3,7 @@ package scaler.tictactoe;
 import scaler.tictactoe.controllers.GameController;
 import scaler.tictactoe.models.*;
 import scaler.tictactoe.strategies.winningStrategies.ColumnWinningStrategies;
+import scaler.tictactoe.strategies.winningStrategies.DiagonalWinningStrategies;
 import scaler.tictactoe.strategies.winningStrategies.RowWinningStrategy;
 import scaler.tictactoe.strategies.winningStrategies.WinningStrategies;
 
@@ -21,6 +22,7 @@ public class Client {
         List<WinningStrategies> winningStrategies = new ArrayList<>();
         winningStrategies.add(new RowWinningStrategy());
         winningStrategies.add(new ColumnWinningStrategies());
+        winningStrategies.add(new DiagonalWinningStrategies());
 
         Game game =gameController.startGame(3, players, winningStrategies);
 
@@ -30,8 +32,12 @@ public class Client {
             gameController.displayBoard(game);
             gameController.makeMove(game);
         }
-
-        System.out.println("Game has won");
+        if(game.getGameState().equals(GameState.SUCCESS)){
+            System.out.println(gameController.getWinner(game)+" has won the game");
+        }
+        else{
+            System.out.println("Game ended in draw");
+        }
 
     }
 }
