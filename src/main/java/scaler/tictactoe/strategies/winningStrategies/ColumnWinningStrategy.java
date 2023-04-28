@@ -7,7 +7,7 @@ import scaler.tictactoe.models.Symbol;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ColumnWinningStrategies implements WinningStrategies{
+public class ColumnWinningStrategy implements WinningStrategies{
     Map<Integer, Map<Symbol,Integer>> counts= new HashMap<>();
     public boolean checkWinner(Board board, Move move) {
         int col = move.getCell().getCol();
@@ -15,7 +15,7 @@ public class ColumnWinningStrategies implements WinningStrategies{
             Map<Symbol,Integer> map= new HashMap<>();
             counts.put(col,map);
         }
-        Symbol symbol = move.getCell().getPlayer().getSymbol();
+        Symbol symbol = move.getPlayer().getSymbol();
         Map<Symbol,Integer> colMap=counts.get(col);
         if(!colMap.containsKey(symbol)){
             colMap.put(symbol,0);
@@ -26,5 +26,13 @@ public class ColumnWinningStrategies implements WinningStrategies{
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void handleUndo(Board board, Move move) {
+        int col=move.getCell().getCol();
+        Symbol symbol= move.getPlayer().getSymbol();
+        Map<Symbol,Integer> colMap=counts.get(col);
+        colMap.put(symbol,colMap.get(symbol)-1);
     }
 }

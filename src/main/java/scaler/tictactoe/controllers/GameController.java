@@ -27,14 +27,12 @@ public class GameController {
         game.makeMove();
     }
 
-
-
-    public String getWinner(Game game){
-        return game.getWinner().getName();
+    public Player getWinner(Game game){
+        return game.getWinner();
     }
 
-    public void undoLastMove(){
-
+    public void undoLastMove(Game game){
+        game.undo();
     }
 
 

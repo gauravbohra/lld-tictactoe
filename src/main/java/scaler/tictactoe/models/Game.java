@@ -52,13 +52,16 @@ public class Game {
             return;
         }
 
+        //Updating the cell in the board
         Cell cellToUpdate=board.getBoard().get(row).get(col);
         cellToUpdate.setPlayer(currentMovePlayer);
         cellToUpdate.setCellState(CellState.FILLED);
 
+        //adding move to the moves list
         move=new Move(cellToUpdate,currentMovePlayer);
         this.moves.add(move);
 
+        //Check winner
         if(checkWinner(move)){
             this.gameState=GameState.SUCCESS;
             this.winner=currentMovePlayer;
@@ -69,6 +72,27 @@ public class Game {
 
         this.nextPlayerIndex++;
         this.nextPlayerIndex=this.nextPlayerIndex % players.size();
+    }
+
+    public void undo(){
+        if(moves.size()==0){
+            System.out.println("No moves to undo");
+            return;
+        }
+        //Remove the last move from the moves list
+        Move lastMove = moves.get(moves.size()-1);
+        moves.remove(lastMove);
+        //Updating the board cell of last move
+        Cell cell = lastMove.getCell();
+        cell.setCellState(CellState.EMPTY);
+        cell.setPlayer(null);
+        //Updating the winning strategies map
+        for(WinningStrategies strategy:winningStrategies){
+            strategy.handleUndo(board,lastMove);
+        }
+        //Updating the next player index
+        nextPlayerIndex= nextPlayerIndex-1;
+        nextPlayerIndex=(nextPlayerIndex+players.size())%players.size();
     }
 
     public boolean validateMove(Move move){

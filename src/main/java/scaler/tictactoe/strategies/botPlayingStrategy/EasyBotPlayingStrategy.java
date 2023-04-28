@@ -13,7 +13,7 @@ public class EasyBotPlayingStrategy implements BotPlayingStrategy{
         for(List<Cell> row: board.getBoard()){
             for (Cell cell: row){
                 if(cell.getCellState()== CellState.EMPTY){
-                    new Move(cell,null);
+                   return new Move(cell,null);
                 }
             }
         }
